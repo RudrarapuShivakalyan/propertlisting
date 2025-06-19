@@ -389,7 +389,7 @@ img {
   }
   
   .md\\:col-span-2 {
-    grid-column: span 2 / span 2;
+    grid-column: span 2 \/ span 2;
   }
   
   .md\\:text-3xl {
@@ -551,7 +551,7 @@ img {
   right: 0;
 }
 
-.top-1\\/2 {
+.top-half {
   top: 50%;
 }
 
@@ -567,7 +567,7 @@ img {
   transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1);
 }
 
-.-translate-y-1\\/2 {
+.-translate-y-half {
   transform: translateY(-50%);
 }
 
