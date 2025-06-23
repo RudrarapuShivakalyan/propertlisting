@@ -8,13 +8,13 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   return (
     <nav className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
       <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <Link to="/" className="flex items-center group">
+        <Link to={isAuthenticated ? "/home" : "/login"} className="flex items-center group">
           <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-md mr-3 group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-105">
             <img 
               src="https://cdn-icons-png.flaticon.com/512/1040/1040993.png" 
@@ -29,11 +29,11 @@ const Navbar = () => {
         </Link>
         
         <div className="flex items-center space-x-8">
-          <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 flex items-center">
+          <Link to="/home" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 flex items-center">
             <i className="fas fa-home text-blue-500 mr-2"></i>
             Home
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 flex items-center">
+          <Link to="/home" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 flex items-center">
             <i className="fas fa-search text-blue-500 mr-2"></i>
             Explore
           </Link>

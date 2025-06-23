@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import './App.css';
+import { useAuth } from './context/AuthContext';
 
 // Import pages
 import Home from './pages/Home';
@@ -13,6 +14,19 @@ import Register from './pages/Register';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
+// Protected route component
+const RequireAuth = () => {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  
+  if (!isAuthenticated) {
+    // Redirect to login if not authenticated
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  return <Outlet />;
+};
+
 function App() {
   return (
     <Router>
@@ -20,9 +34,17 @@ function App() {
         <Navbar />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/property/:id" element={<PropertyDetails />} />
-            <Route path="/add-property" element={<AddProperty />} />
+            {/* Make login the default landing page */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            
+            {/* Protected routes */}
+            <Route element={<RequireAuth />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/property/:id" element={<PropertyDetails />} />
+              <Route path="/add-property" element={<AddProperty />} />
+            </Route>
+            
+            {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>

@@ -10,6 +10,8 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [accessRequested, setAccessRequested] = useState(false);
+  const [accessGranted, setAccessGranted] = useState(false);
   const navigate = useNavigate();
   const { login, loginAsAgent } = useAuth();
 
@@ -46,8 +48,40 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const requestAccess = async (e) => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      try {
+        setLoading(true);
+        
+        // Simulate an API call to request access
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setAccessRequested(true);
+        setLoading(false);
+        
+        // Simulate access being granted after 2 seconds
+        setTimeout(() => {
+          setAccessGranted(true);
+        }, 2000);
+      } catch (err) {
+        console.error('Access request error:', err);
+        setErrors({
+          form: 'An error occurred while requesting access. Please try again.'
+        });
+        setLoading(false);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!accessGranted) {
+      requestAccess(e);
+      return;
+    }
     
     if (validateForm()) {
       try {
@@ -59,8 +93,11 @@ const Login = () => {
           : await login(formData.email, formData.password);
         
         if (result.success) {
-          // Redirect to home page
-          navigate('/');
+          // Show success message
+          alert('Login successful! Redirecting to home page...');
+          
+          // Redirect to home page (main page)
+          navigate('/home');
         } else {
           setErrors({
             form: result.error || 'Invalid email or password. Please try again.'
@@ -85,6 +122,18 @@ const Login = () => {
         {errors.form && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             <p>{errors.form}</p>
+          </div>
+        )}
+        
+        {accessRequested && !accessGranted && (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <p>Access request submitted. Waiting for approval...</p>
+          </div>
+        )}
+        
+        {accessGranted && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <p>Access granted! You can now log in.</p>
           </div>
         )}
         
@@ -136,10 +185,12 @@ const Login = () => {
           
           <button
             type="submit"
-            className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`w-full ${accessGranted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white py-2 rounded-md font-medium ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             disabled={loading}
           >
-            {loading ? 'Logging in...' : formData.loginAsAgent ? 'Login as Agent' : 'Login'}
+            {loading ? 'Processing...' : 
+             accessGranted ? (formData.loginAsAgent ? 'Login as Agent' : 'Login') : 
+             'Request Access'}
           </button>
         </form>
         
