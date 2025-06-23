@@ -18,6 +18,7 @@ const PropertyCard = ({ property }) => {
     squareFeet = 0,
     type = '',
     photos = [],
+    isAgentProperty = false
   } = property;
 
   // Format rent with error handling
@@ -39,6 +40,12 @@ const PropertyCard = ({ property }) => {
         <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 m-3 rounded-md text-xs font-medium shadow-sm">
           <i className="fas fa-building mr-1"></i> {spaceType}
         </div>
+        
+        {isAgentProperty && (
+          <div className="absolute top-0 left-0 bg-green-600 text-white px-3 py-1 m-3 rounded-md text-xs font-medium shadow-sm">
+            <i className="fas fa-user-tie mr-1"></i> Agent
+          </div>
+        )}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
           <div className="flex items-center text-xs">
             <i className="fas fa-user-circle mr-1"></i>

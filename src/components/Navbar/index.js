@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
-  const { isAuthenticated, currentUser, logout } = useAuth();
+  const { isAuthenticated, currentUser, isAgent, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -47,6 +47,11 @@ const Navbar = () => {
               <div className="flex items-center">
                 <span className="text-sm text-gray-600 mr-4">
                   Welcome, {currentUser.name}
+                  {isAgent && (
+                    <span className="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">
+                      Agent
+                    </span>
+                  )}
                 </span>
                 <button 
                   onClick={handleLogout}

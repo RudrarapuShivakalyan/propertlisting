@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import PropertyList from '../../components/PropertyList';
 import Pagination from '../../components/Pagination';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+import { sampleProperties } from '../../utils/sampleProperties';
 
 // Mock data for development - would be replaced with API calls
 const mockProperties = [
@@ -87,6 +89,7 @@ const mockProperties = [
 ];
 
 const Home = () => {
+  const { isAgent } = useAuth();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -107,8 +110,34 @@ const Home = () => {
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Sort the mock data based on the selected criteria
-        let sortedProperties = [...mockProperties];
+        // Combine mock properties with agent sample properties if user is an agent
+        let allProperties = [...mockProperties];
+        
+        // Add agent properties if user is an agent
+        if (isAgent) {
+          // Convert sample properties to match the format of mock properties
+          const formattedAgentProperties = sampleProperties.map((prop, index) => ({
+            id: 100 + index, // Use high IDs to ensure they're different from mock properties
+            firstName: prop.firstName,
+            lastName: prop.lastName,
+            locality: prop.locality,
+            spaceType: prop.spaceType,
+            bhk: prop.bhk,
+            rent: parseInt(prop.rent),
+            squareFeet: parseInt(prop.squareFeet),
+            type: prop.type,
+            photos: prop.photos || [
+              'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1773&q=80'
+            ],
+            views: Math.floor(Math.random() * 200) + 50,
+            isAgentProperty: true
+          }));
+          
+          allProperties = [...allProperties, ...formattedAgentProperties];
+        }
+        
+        // Sort the properties based on the selected criteria
+        let sortedProperties = [...allProperties];
         
         switch (sortBy) {
           case 'dateUploaded':

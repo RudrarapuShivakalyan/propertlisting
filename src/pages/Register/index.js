@@ -7,12 +7,13 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    registerAsAgent: false
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, registerAsAgent } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,8 +67,10 @@ const Register = () => {
       try {
         setLoading(true);
         
-        // Use the register function from AuthContext
-        const result = await register(formData.name, formData.email, formData.password);
+        // Use the appropriate register function from AuthContext
+        const result = formData.registerAsAgent
+          ? await registerAsAgent(formData.name, formData.email, formData.password)
+          : await register(formData.name, formData.email, formData.password);
         
         if (result.success) {
           // Redirect to home page
@@ -156,12 +159,30 @@ const Register = () => {
             {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
           </div>
           
+          <div className="mb-6">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="registerAsAgent"
+                checked={formData.registerAsAgent}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  registerAsAgent: e.target.checked
+                })}
+                className="mr-2"
+                disabled={loading}
+              />
+              <span className="text-gray-700">Register as Property Agent</span>
+            </label>
+            <p className="text-gray-500 text-sm mt-1">Agents can list properties for rent or sale</p>
+          </div>
+          
           <button
             type="submit"
             className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             disabled={loading}
           >
-            {loading ? 'Creating Account...' : 'Register'}
+            {loading ? 'Creating Account...' : formData.registerAsAgent ? 'Register as Agent' : 'Register'}
           </button>
         </form>
         

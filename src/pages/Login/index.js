@@ -5,12 +5,13 @@ import { useAuth } from '../../context/AuthContext';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    loginAsAgent: false
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginAsAgent } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,8 +53,10 @@ const Login = () => {
       try {
         setLoading(true);
         
-        // Use the login function from AuthContext
-        const result = await login(formData.email, formData.password);
+        // Use the appropriate login function from AuthContext
+        const result = formData.loginAsAgent 
+          ? await loginAsAgent(formData.email, formData.password)
+          : await login(formData.email, formData.password);
         
         if (result.success) {
           // Redirect to home page
@@ -114,12 +117,29 @@ const Login = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
           
+          <div className="mb-6">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="loginAsAgent"
+                checked={formData.loginAsAgent}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  loginAsAgent: e.target.checked
+                })}
+                className="mr-2"
+                disabled={loading}
+              />
+              <span className="text-gray-700">Login as Agent</span>
+            </label>
+          </div>
+          
           <button
             type="submit"
             className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Logging in...' : formData.loginAsAgent ? 'Login as Agent' : 'Login'}
           </button>
         </form>
         
